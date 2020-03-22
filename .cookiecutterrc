@@ -1,0 +1,69 @@
+# This file exists so you can easily regenerate your project.
+#
+# `cookiepatcher` is a convenient shim around `cookiecutter`
+# for regenerating projects (it will generate a .cookiecutterrc
+# automatically for any template). To use it:
+#
+#    pip install cookiepatcher
+#    cookiepatcher gh:ionelmc/cookiecutter-pylibrary project-path
+#
+# See:
+#    https://pypi.org/project/cookiepatcher
+#
+# Alternatively, you can run:
+#
+#    cookiecutter --overwrite-if-exists --config-file=project-path/.cookiecutterrc gh:ionelmc/cookiecutter-pylibrary
+
+default_context:
+
+    _extensions:               ['jinja2_time.TimeExtension']
+    _template:                 'gh:ionelmc/cookiecutter-pylibrary'
+    allow_tests_inside_package: 'no'
+    appveyor:                  'no'
+    c_extension_function:      'longest'
+    c_extension_module:        '_pdmongo'
+    c_extension_optional:      'no'
+    c_extension_support:       'no'
+    c_extension_test_pypi:     'no'
+    c_extension_test_pypi_username: 'pakallis'
+    codacy:                    'no'
+    codacy_projectid:          '[Get ID from https://app.codacy.com/app/pakallis/python-pandas-mongo/settings]'
+    codeclimate:               'no'
+    codecov:                   'yes'
+    command_line_interface:    'no'
+    command_line_interface_bin_name: 'pdmongo'
+    coveralls:                 'yes'
+    coveralls_token:           '[Required for Appveyor, take it from https://coveralls.io/github/pakallis/python-pandas-mongo]'
+    distribution_name:         'pdmongo'
+    email:                     'pakallis@gmail.com'
+    full_name:                 'Pavlos Kallis'
+    landscape:                 'no'
+    license:                   'MIT license'
+    linter:                    'flake8'
+    package_name:              'pdmongo'
+    project_name:              'Pandas Mongo'
+    project_short_description: 'Transfer data between pandas dataframes and MongoDB'
+    pypi_badge:                'yes'
+    pypi_disable_upload:       'yes'
+    release_date:              'today'
+    repo_hosting:              'github.com'
+    repo_hosting_domain:       'github.com'
+    repo_name:                 'python-pandas-mongo'
+    repo_username:             'pakallis'
+    requiresio:                'no'
+    scrutinizer:               'no'
+    setup_py_uses_setuptools_scm: 'no'
+    setup_py_uses_test_runner: 'yes'
+    sphinx_docs:               'yes'
+    sphinx_docs_hosting:       'https://python-pandas-mongo.readthedocs.io/'
+    sphinx_doctest:            'yes'
+    sphinx_theme:              'sphinx-py3doc-enhanced-theme'
+    test_matrix_configurator:  'no'
+    test_matrix_separate_coverage: 'no'
+    test_runner:               'pytest'
+    travis:                    'yes'
+    travis_osx:                'no'
+    version:                   '0.0.0'
+    website:                   'https://pakallis.github.com'
+    year_from:                 '2020'
+    year_to:                   '2020'
