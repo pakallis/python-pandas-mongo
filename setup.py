@@ -73,7 +73,8 @@ setup(
     ],
     python_requires='>=3.5',
     install_requires=[
-        # eg: 'aspectlib==1.1.1', 'six>=1.7',
+        'pymongo>=3.4',
+        'pandas>=0.20'
     ],
     extras_require={
         # eg:
