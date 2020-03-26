@@ -77,9 +77,11 @@ setup(
         'pandas>=0.20'
     ],
     extras_require={
-        # eg:
-        #   'rst': ['docutils>=0.11'],
-        #   ':python_version=="2.6"': ['argparse'],
+        "test": [
+            "pytest>=4.0.2",
+            "pytest-mock>=1.10.0",
+            "hypothesis>=3.58"
+        ]
     },
     setup_requires=[
         'pytest-runner',
