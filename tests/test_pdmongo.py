@@ -67,3 +67,42 @@ def test_read_mongo_chunksize(mocker):
     mock = mocker.spy(db[collection_name], 'aggregate')
     pdm.read_mongo(collection_name, [], db, chunksize=batch_size)
     mock.assert_called_with([], batchSize=batch_size)
+
+
+def test_read_mongo_index_col(mocker):
+    class DBStub():
+        def aggregate(self, docs, **kwargs):
+            return [
+                {
+                    't': '2020-01-01T00:00:00.000Z', 'v': 20
+                },
+                {
+                    't': '2020-01-01T01:00:00.000Z', 'v': 15
+                }
+            ]
+
+    collection_name = 'ACollection'
+    db = {collection_name: DBStub()}
+    df = pdm.read_mongo(collection_name, [], db, index_col='t')
+    assert df.index[0] == '2020-01-01T00:00:00.000Z'
+    assert df.v[0] == 20
+
+
+def test_read_mongo_index_col_multi_index(mocker):
+    class DBStub():
+        def aggregate(self, docs, **kwargs):
+            return [
+                {
+                    't': '2020-01-01T00:00:00.000Z', 'v': 20
+                },
+                {
+                    't': '2020-01-01T01:00:00.000Z', 'v': 15
+                }
+            ]
+
+    collection_name = 'ACollection'
+    db = {collection_name: DBStub()}
+    df = pdm.read_mongo(collection_name, [], db, index_col=['t', 'v'])
+    assert df.index[0][0] == '2020-01-01T00:00:00.000Z'
+    assert df.index[0][1] == 20
+    assert not df.values.size > 0

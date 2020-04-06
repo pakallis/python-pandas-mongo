@@ -55,7 +55,9 @@ def read_mongo(
             raise ValueError("Invalid chunksize: Must be > 0")
 
         extra_params['batchSize'] = chunksize
-    return DataFrame.from_records(db[collection].aggregate(query, **extra_params))
+    return DataFrame.from_records(
+        db[collection].aggregate(query, **extra_params),
+        index=index_col)
 
 
 def to_mongo(
