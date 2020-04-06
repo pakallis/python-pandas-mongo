@@ -42,3 +42,28 @@ def test_to_mongo_with_index_false(mocker):
 
     pdm.to_mongo(df, collection_name, db, index=False)
     spy.assert_called_with([{'A': 1}, {'A': 2}])
+
+
+def test_read_mongo(mocker):
+    class DBStub():
+        def aggregate(self, docs):
+            return []
+
+    collection_name = 'ACollection'
+    db = {collection_name: DBStub()}
+    mock = mocker.spy(db[collection_name], 'aggregate')
+    pdm.read_mongo(collection_name, [], db)
+    mock.assert_called_with([])
+
+
+def test_read_mongo_chunksize(mocker):
+    class DBStub():
+        def aggregate(self, docs, **kwargs):
+            return []
+
+    collection_name = 'ACollection'
+    batch_size = 2
+    db = {collection_name: DBStub()}
+    mock = mocker.spy(db[collection_name], 'aggregate')
+    pdm.read_mongo(collection_name, [], db, chunksize=batch_size)
+    mock.assert_called_with([], batchSize=batch_size)

@@ -40,12 +40,22 @@ def read_mongo(
     chunksize : int, default None
         If specified, return an iterator where `chunksize` is the number of
         docs to include in each chunk.
+    typ: {‘frame’, ‘series’}, default ‘frame’
+        The type of object to recover.
 
     Returns
     -------
     Dataframe
     """
-    return DataFrame.from_records(db[collection].aggregate(query))
+    extra_params = {}
+    if chunksize is not None:
+        if not isinstance(chunksize, int):
+            raise TypeError("Invalid chunksize: Must be an int")
+        if not chunksize > 0:
+            raise ValueError("Invalid chunksize: Must be > 0")
+
+        extra_params['batchSize'] = chunksize
+    return DataFrame.from_records(db[collection].aggregate(query, **extra_params))
 
 
 def to_mongo(
