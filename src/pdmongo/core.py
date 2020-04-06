@@ -86,8 +86,7 @@ def to_mongo(
     dtype : dict or scalar, optional
         Specifying the datatype for columns. If a dictionary is used, the
         keys should be the column names and the values should be the
-        SQLAlchemy types or strings for the sqlite3 fallback mode. If a
-        scalar is provided, it will be applied to all columns.
+        MongoDB. If a scalar is provided, it will be applied to all columns.
     """
     records = frame.to_dict('records')
     if index is True:
