@@ -106,3 +106,32 @@ def test_read_mongo_index_col_multi_index(mocker):
     assert df.index[0][0] == '2020-01-01T00:00:00.000Z'
     assert df.index[0][1] == 20
     assert not df.values.size > 0
+
+
+def test_read_mongo_db_str(mocker):
+    class CollectionStub():
+        def aggregate(self, query, **kwargs):
+            return [
+                {
+                    't': '2020-01-01T00:00:00.000Z', 'v': 20
+                },
+                {
+                    't': '2020-01-01T01:00:00.000Z', 'v': 15
+                }
+            ]
+
+
+    class DBStub():
+        def __getitem__(self, item):
+            return CollectionStub()
+
+    mock = mocker.patch("pymongo.database.Database")
+    mock.return_value = DBStub()
+    collection_name = 'ACollection'
+    db_name = 'pd-mongo-sample-db'
+
+    db_uri = "mongodb://localhost:27017/pd-mongo-sample-db"
+    df = pdm.read_mongo(collection_name, [], db_uri)
+    assert df.index[0] == 0
+    assert df.values[0][0] == '2020-01-01T00:00:00.000Z'
+    assert not df.values.size == 2

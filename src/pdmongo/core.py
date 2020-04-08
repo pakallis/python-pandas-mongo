@@ -1,4 +1,30 @@
+from pymongo.database import Database
+from pymongo.uri_parser import parse_uri
+from pymongo import MongoClient
 from pandas import DataFrame
+
+
+def _get_db_instance(db):
+    """
+    Retrieve the pymongo.database.Database instance.
+
+    Parameters
+    ----------
+    db: str or pymongo.database.Database
+        - if str an instance of pymongo.database.Database will be instantiated and returned
+        - if pymongo.database.Database the db instance is returned
+
+    Returns
+    -------
+    pymongo.database.Database
+    """ 
+    if isinstance(db, str):
+        db_name = parse_uri(db).get('database')
+        if db_name is None:
+            # TODO: Improve validation message
+            raise ValueError("Invalid db: Could not extract database from uri: %s", db)
+        db = MongoClient(db)[db_name]
+    return db
 
 
 def read_mongo(
@@ -55,6 +81,7 @@ def read_mongo(
             raise ValueError("Invalid chunksize: Must be > 0")
 
         extra_params['batchSize'] = chunksize
+    db = _get_db_instance(db)
     return DataFrame.from_records(
         db[collection].aggregate(query, **extra_params),
         index=index_col)
@@ -108,4 +135,5 @@ def to_mongo(
         for i, record in enumerate(records):
             if index_label is None and idx_name is not None:
                 record[idx_name] = idx_data[i]
+    db = _get_db_instance(db)
     return db[name].insert_many(records)
