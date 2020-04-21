@@ -1,5 +1,5 @@
 import pandas
-from .core import read_mongo, to_mongo
+from .core import read_mongo, to_mongo # noqa
 
 pandas.DataFrame.to_mongo = to_mongo
 

@@ -4,6 +4,7 @@ import pdmongo as pdm
 
 def test_to_mongo_default_args(mocker):
     df = pd.DataFrame({'A': [1, 2]})
+
     class DBStub():
         def insert_many(self, docs):
             pass
@@ -17,7 +18,8 @@ def test_to_mongo_default_args(mocker):
 
 
 def test_to_mongo_with_index_true(mocker):
-    df = pd.DataFrame({'A': [1, 2], 'B': [2,3]}).set_index('B')
+    df = pd.DataFrame({'A': [1, 2], 'B': [2, 3]}).set_index('B')
+
     class DBStub():
         def insert_many(self, docs):
             pass
@@ -31,7 +33,8 @@ def test_to_mongo_with_index_true(mocker):
 
 
 def test_to_mongo_with_index_false(mocker):
-    df = pd.DataFrame({'A': [1, 2], 'B': [2,3]}).set_index('B')
+    df = pd.DataFrame({'A': [1, 2], 'B': [2, 3]}).set_index('B')
+
     class DBStub():
         def insert_many(self, docs):
             pass
@@ -120,7 +123,6 @@ def test_read_mongo_db_str(mocker):
                 }
             ]
 
-
     class DBStub():
         def __getitem__(self, item):
             return CollectionStub()
@@ -128,7 +130,6 @@ def test_read_mongo_db_str(mocker):
     mock = mocker.patch("pymongo.database.Database")
     mock.return_value = DBStub()
     collection_name = 'ACollection'
-    db_name = 'pd-mongo-sample-db'
 
     db_uri = "mongodb://localhost:27017/pd-mongo-sample-db"
     df = pdm.read_mongo(collection_name, [], db_uri)

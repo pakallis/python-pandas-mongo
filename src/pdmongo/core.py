@@ -1,4 +1,3 @@
-from pymongo.database import Database
 from pymongo.uri_parser import parse_uri
 from pymongo import MongoClient
 from pandas import DataFrame
@@ -17,7 +16,7 @@ def _get_db_instance(db):
     Returns
     -------
     pymongo.database.Database
-    """ 
+    """
     if isinstance(db, str):
         db_name = parse_uri(db).get('database')
         if db_name is None:
@@ -39,7 +38,7 @@ def read_mongo(
     """
     Read MongoDB query into a DataFrame.
 
-    Returns a DataFrame corresponding to the result set of the query. 
+    Returns a DataFrame corresponding to the result set of the query.
     Optionally provide an `index_col` parameter to use one of the
     columns as the index, otherwise default integer index will be used.
 
@@ -49,7 +48,7 @@ def read_mongo(
         Mongo collection to select for querying
     query : list
         Must be an aggregate query.
-        The input will be passed to pymongo `.aggregate` 
+        The input will be passed to pymongo `.aggregate`
     db : pymongo.database.Database or database string URI
         The database to use
     index_col : str or list of str, optional, default: None
