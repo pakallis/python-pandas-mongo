@@ -90,13 +90,10 @@ def to_mongo(
     frame,
     name,
     db,
-    schema=None,
     if_exists="fail",
     index=True,
     index_label=None,
     chunksize=None,
-    dtype=None,
-    method=None,
 ):
     """
     Write records stored in a DataFrame to a MongoDB collection.
@@ -121,10 +118,6 @@ def to_mongo(
     chunksize : int, optional
         Specify the number of rows in each batch to be written at a time.
         By default, all rows will be written at once.
-    dtype : dict or scalar, optional
-        Specifying the datatype for columns. If a dictionary is used, the
-        keys should be the column names and the values should be the
-        MongoDB. If a scalar is provided, it will be applied to all columns.
     """
     records = frame.to_dict('records')
     if index is True:
