@@ -1,5 +1,6 @@
 import pandas as pd
 import pdmongo as pdm
+import pytest
 
 
 def test_to_mongo_default_args(mocker):
@@ -123,7 +124,7 @@ def test_read_mongo_db_str(mocker):
                 }
             ]
 
-    class DBStub():
+    class DBStub:
         def __getitem__(self, item):
             return CollectionStub()
 
@@ -136,3 +137,31 @@ def test_read_mongo_db_str(mocker):
     assert df.index[0] == 0
     assert df.values[0][0] == '2020-01-01T00:00:00.000Z'
     assert not df.values.size == 2
+
+
+def test_read_mongo_params(mocker):
+    collection_name = 'ACollection'
+
+    class CollectionStub:
+        def aggregate(self, docs, **kwargs):
+            pass
+
+    collection_mock = mocker.Mock(CollectionStub)
+    collection_mock.aggregate.return_value = []
+    db = {collection_name: collection_mock}
+    pdm.read_mongo(collection_name, [], db, extra={'allowDiskUse': True})
+    collection_mock.aggregate.assert_called_with([], allowDiskUse=True)
+
+
+def test_read_mongo_params_batch_size_and_chunksize_raises_value_error(mocker):
+    collection_name = 'ACollection'
+
+    class CollectionStub:
+        def aggregate(self, docs, **kwargs):
+            pass
+
+    collection_mock = mocker.Mock(CollectionStub)
+    collection_mock.aggregate.return_value = []
+    db = {collection_name: collection_mock}
+    with pytest.raises(ValueError):
+        pdm.read_mongo(collection_name, [], db, chunksize=30, extra={'batchSize': 20})

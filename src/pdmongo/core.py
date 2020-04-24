@@ -31,7 +31,7 @@ def read_mongo(
         query,
         db,
         index_col=None,
-        params=None,
+        extra=None,
         parse_dates=None,
         columns=None,
         chunksize=None):
@@ -53,7 +53,7 @@ def read_mongo(
         The database to use
     index_col : str or list of str, optional, default: None
         Column(s) to set as index(MultiIndex).
-    params : list, tuple or dict, optional, default: None
+    extra : list, tuple or dict, optional, default: None
         List of parameters to pass to find/aggregate method.
     parse_dates : list or dict, default: None
         - List of column names to parse as dates.
@@ -72,17 +72,24 @@ def read_mongo(
     -------
     Dataframe
     """
-    extra_params = {}
+    params = {}
     if chunksize is not None:
         if not isinstance(chunksize, int):
             raise TypeError("Invalid chunksize: Must be an int")
         if not chunksize > 0:
             raise ValueError("Invalid chunksize: Must be > 0")
 
-        extra_params['batchSize'] = chunksize
+        params['batchSize'] = chunksize
     db = _get_db_instance(db)
+    if extra is None:
+        extra = {}
+
+    if extra.get('batchSize') is not None:
+        if chunksize is not None:
+            raise ValueError("Either chunksize or batchSize must be provided, not both")
+
     return DataFrame.from_records(
-        db[collection].aggregate(query, **extra_params),
+        db[collection].aggregate(query, **{**params, **extra}),
         index=index_col)
 
 
