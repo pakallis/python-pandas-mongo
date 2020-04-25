@@ -27,14 +27,15 @@ def _get_db_instance(db):
 
 
 def read_mongo(
-        collection,
-        query,
-        db,
-        index_col=None,
-        extra=None,
-        parse_dates=None,
-        columns=None,
-        chunksize=None):
+    collection,
+    query,
+    db,
+    index_col=None,
+    extra=None,
+    parse_dates=None,
+    columns=None,
+    chunksize=None
+):
     """
     Read MongoDB query into a DataFrame.
 
