@@ -26,9 +26,6 @@ matrix:
         - TOXENV=py38,codecov,coveralls
       python: '3.8'
     - env:
-        - TOXENV=pypy,codecov,coveralls
-      python: 'pypy'
-    - env:
         - TOXENV=pypy3,codecov,coveralls
         - TOXPYTHON=pypy3
       python: 'pypy3'
