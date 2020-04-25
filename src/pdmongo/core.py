@@ -1,6 +1,6 @@
-from pymongo.uri_parser import parse_uri
-from pymongo import MongoClient
 from pandas import DataFrame
+from pymongo import MongoClient
+from pymongo.uri_parser import parse_uri
 
 
 def _get_db_instance(db):

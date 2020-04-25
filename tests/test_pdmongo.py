@@ -1,6 +1,7 @@
 import pandas as pd
-import pdmongo as pdm
 import pytest
+
+import pdmongo as pdm
 
 
 def test_to_mongo_default_args(mocker):
