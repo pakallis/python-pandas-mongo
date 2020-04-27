@@ -26,6 +26,35 @@ def _get_db_instance(db):
     return db
 
 
+def _handle_exists_collection(name, exists, db):
+    """
+    Handles the `if_exists` argument of `to_mongo`.
+
+    Parameters
+    ----------
+    if_exists: str
+        Can be 'fail', 'replace', 'append'
+            - fail: A ValueError is raised
+            - replace: Collection is deleted before inserting new documents
+            - append: Documents are appended to existing collection
+    """
+
+    if exists == "fail":
+        if db[name].count() > 0:
+            raise ValueError(f"Collection '{name}' already exists.")
+        return
+
+    if exists == "replace":
+        if db[name].count() > 0:
+            db[name].drop()
+        return
+
+    if exists == "append":
+        return
+
+    raise ValueError(f"'{exists}' is not valid for if_exists")
+
+
 def _split_in_chunks(lst, chunksize):
     """
     Splits a list in chunks based on provided chunk size.
@@ -157,6 +186,8 @@ def to_mongo(
         Specify the number of rows in each batch to be written at a time.
         By default, all rows will be written at once.
     """
+    db = _get_db_instance(db)
+    _handle_exists_collection(name, if_exists, db)
     records = frame.to_dict('records')
     if index is True:
         idx = frame.index
@@ -165,7 +196,6 @@ def to_mongo(
         for i, record in enumerate(records):
             if index_label is None and idx_name is not None:
                 record[idx_name] = idx_data[i]
-    db = _get_db_instance(db)
     if chunksize is not None:
         _validate_chunksize(chunksize)
         result_insert_many = []

@@ -12,6 +12,9 @@ def test_to_mongo_default_args(mocker):
         def insert_many(self, docs):
             pass
 
+        def count(self):
+            return 0
+
     collection_name = 'Acollection'
     db = {collection_name: DBStub()}
     spy = mocker.spy(db[collection_name], 'insert_many')
@@ -27,6 +30,9 @@ def test_to_mongo_with_index_true(mocker):
         def insert_many(self, docs):
             pass
 
+        def count(self):
+            return 0
+
     collection_name = 'Acollection'
     db = {collection_name: DBStub()}
     spy = mocker.spy(db[collection_name], 'insert_many')
@@ -41,6 +47,9 @@ def test_to_mongo_with_index_false(mocker):
     class DBStub():
         def insert_many(self, docs):
             pass
+
+        def count(self):
+            return 0
 
     collection_name = 'Acollection'
     db = {collection_name: DBStub()}
@@ -75,6 +84,9 @@ def test_to_mongo_with_chunksize(chunksize, expected_calls, mocker):
         def insert_many(self, docs):
             pass
 
+        def count(self):
+            return 0
+
     collection_name = 'Acollection'
     db = {collection_name: DBStub()}
     spy = mocker.spy(db[collection_name], 'insert_many')
@@ -91,8 +103,14 @@ def test_to_mongo_with_chunksize(chunksize, expected_calls, mocker):
 ])
 def test_to_mongo_with_chunksize_raises_type_error(chunksize, mocker):
     collection_name = 'ACollection'
+
+    class DBStub():
+        def count(self):
+            return 0
+
+    db = {collection_name: DBStub()}
     with pytest.raises(TypeError):
-        pdm.to_mongo(pd.DataFrame(), collection_name, {}, chunksize=chunksize)
+        pdm.to_mongo(pd.DataFrame(), collection_name, db, chunksize=chunksize)
 
 
 @pytest.mark.parametrize("chunksize", [
@@ -101,8 +119,74 @@ def test_to_mongo_with_chunksize_raises_type_error(chunksize, mocker):
 ])
 def test_to_mongo_with_chunksize_raises_value_error(chunksize, mocker):
     collection_name = 'ACollection'
+
+    class DBStub():
+        def count(self):
+            return 0
+
+    db = {collection_name: DBStub()}
     with pytest.raises(ValueError):
-        pdm.to_mongo(pd.DataFrame(), collection_name, {}, chunksize=chunksize)
+        pdm.to_mongo(pd.DataFrame(), collection_name, db, chunksize=chunksize)
+
+
+def test_to_mongo_with_if_exists_fail_raises_value_error():
+    class DBStub():
+        def count(self):
+            return 1
+
+    collection_name = 'Acollection'
+    db = {collection_name: DBStub()}
+    with pytest.raises(ValueError, match='already exists'):
+        pdm.to_mongo(pd.DataFrame(), collection_name, db, if_exists='fail')
+
+
+def test_to_mongo_with_if_exists_replace_calls_drop(mocker):
+    class DBStub():
+        def count(self):
+            return 1
+
+        def drop(self):
+            pass
+
+        def insert_many(self, *docs):
+            pass
+
+    collection_name = 'Acollection'
+    db = {collection_name: DBStub()}
+    spy = mocker.spy(db[collection_name], 'drop')
+    pdm.to_mongo(pd.DataFrame(), collection_name, db, if_exists='replace')
+    spy.assert_called_once()
+
+
+def test_to_mongo_with_if_exists_append(mocker):
+    class DBStub():
+        def count(self):
+            return 1
+
+        def drop(self):
+            pass
+
+        def insert_many(self, *docs):
+            pass
+
+    collection_name = 'Acollection'
+    db = {collection_name: DBStub()}
+    spy = mocker.spy(db[collection_name], 'drop')
+    pdm.to_mongo(pd.DataFrame(), collection_name, db, if_exists='append')
+    spy.assert_not_called()
+
+
+@pytest.mark.parametrize("if_exists", [
+    "a",
+    1,
+    -1,
+    {},
+    []
+])
+def test_to_mongo_with_if_exists_invalid_raises_value_error(if_exists):
+    collection_name = 'ACollection'
+    with pytest.raises(ValueError):
+        pdm.to_mongo(pd.DataFrame(), collection_name, {}, if_exists=if_exists)
 
 
 def test_read_mongo(mocker):
