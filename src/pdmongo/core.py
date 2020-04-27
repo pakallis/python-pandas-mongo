@@ -26,6 +26,39 @@ def _get_db_instance(db):
     return db
 
 
+def _split_in_chunks(lst, chunksize):
+    """
+    Splits a list in chunks based on provided chunk size.
+
+    Parameters
+    ----------
+    lst: list
+        The list to split in chunks
+
+    Returns
+    -------
+    result: generator
+    A generator with the chunks
+    """
+    for i in range(0, len(lst), chunksize):
+        yield lst[i:i + chunksize]
+
+
+def _validate_chunksize(chunksize):
+    """
+    Raises the proper exception if chunksize is not valid.
+
+    Parameters
+    ----------
+    chunksize: int
+    The chunksize to validate.
+    """
+    if not isinstance(chunksize, int):
+        raise TypeError("Invalid chunksize: Must be an int")
+    if not chunksize > 0:
+        raise ValueError("Invalid chunksize: Must be > 0")
+
+
 def read_mongo(
     collection,
     query,
@@ -75,10 +108,7 @@ def read_mongo(
     """
     params = {}
     if chunksize is not None:
-        if not isinstance(chunksize, int):
-            raise TypeError("Invalid chunksize: Must be an int")
-        if not chunksize > 0:
-            raise ValueError("Invalid chunksize: Must be > 0")
+        _validate_chunksize(chunksize)
 
         params['batchSize'] = chunksize
     db = _get_db_instance(db)
@@ -136,4 +166,10 @@ def to_mongo(
             if index_label is None and idx_name is not None:
                 record[idx_name] = idx_data[i]
     db = _get_db_instance(db)
+    if chunksize is not None:
+        _validate_chunksize(chunksize)
+        result_insert_many = []
+        for chunk in _split_in_chunks(records, chunksize):
+            result_insert_many.append(db[name].insert_many(chunk))
+        return result_insert_many
     return db[name].insert_many(records)

@@ -1,3 +1,4 @@
+from unittest.mock import call
 import pandas as pd
 import pytest
 
@@ -47,6 +48,61 @@ def test_to_mongo_with_index_false(mocker):
 
     pdm.to_mongo(df, collection_name, db, index=False)
     spy.assert_called_with([{'A': 1}, {'A': 2}])
+
+
+@pytest.mark.parametrize("chunksize, expected_calls", [
+    (
+        1,
+        [call([{'A': 1}]), call([{'A': 2}]), call([{'A': 3}]), call([{'A': 4}])]
+    ),
+    (
+        2,
+        [call([{'A': 1}, {'A': 2}]), call([{'A': 3}, {'A': 4}])]
+    ),
+    (
+        3,
+        [call([{'A': 1}, {'A': 2}, {'A': 3}]), call([{'A': 4}])]
+    ),
+    (
+        4,
+        [call([{'A': 1}, {'A': 2}, {'A': 3}, {'A': 4}])]
+    ),
+])
+def test_to_mongo_with_chunksize(chunksize, expected_calls, mocker):
+    df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': [2, 3, 4, 5]}).set_index('B')
+
+    class DBStub():
+        def insert_many(self, docs):
+            pass
+
+    collection_name = 'Acollection'
+    db = {collection_name: DBStub()}
+    spy = mocker.spy(db[collection_name], 'insert_many')
+
+    pdm.to_mongo(df, collection_name, db, index=False, chunksize=chunksize)
+    spy.assert_has_calls(expected_calls)
+
+
+@pytest.mark.parametrize("chunksize", [
+    3.2,
+    'a',
+    {},
+    []
+])
+def test_to_mongo_with_chunksize_raises_type_error(chunksize, mocker):
+    collection_name = 'ACollection'
+    with pytest.raises(TypeError):
+        pdm.to_mongo(pd.DataFrame(), collection_name, {}, chunksize=chunksize)
+
+
+@pytest.mark.parametrize("chunksize", [
+    -1,
+    -3
+])
+def test_to_mongo_with_chunksize_raises_value_error(chunksize, mocker):
+    collection_name = 'ACollection'
+    with pytest.raises(ValueError):
+        pdm.to_mongo(pd.DataFrame(), collection_name, {}, chunksize=chunksize)
 
 
 def test_read_mongo(mocker):
