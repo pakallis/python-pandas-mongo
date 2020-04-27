@@ -33,7 +33,7 @@ def _handle_exists_collection(name, exists, db):
     Parameters
     ----------
     if_exists: str
-        Can be 'fail', 'replace', 'append'
+        Can be one of 'fail', 'replace', 'append'
             - fail: A ValueError is raised
             - replace: Collection is deleted before inserting new documents
             - append: Documents are appended to existing collection
