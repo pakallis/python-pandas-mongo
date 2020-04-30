@@ -20,7 +20,7 @@ project = 'Pandas Mongo'
 year = '2020'
 author = 'Pavlos Kallis'
 copyright = '{0}, {1}'.format(year, author)
-version = release = '0.0.0'
+version = release = '0.0.1'
 
 pygments_style = 'trac'
 templates_path = ['.']

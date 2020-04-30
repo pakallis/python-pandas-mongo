@@ -25,7 +25,7 @@ def read(*names, **kwargs):
 
 setup(
     name='pdmongo',
-    version='0.0.0',
+    version='0.0.1',
     license='MIT',
     description='Transfer data between pandas dataframes and MongoDB',
     long_description='%s\n%s' % (
