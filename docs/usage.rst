@@ -1,5 +1,5 @@
 ===========
-Quick Usage
+Quick Start
 ===========
 
 Writing a pandas DataFrame to a MongoDB collection::
@@ -12,7 +12,7 @@ Writing a pandas DataFrame to a MongoDB collection::
 	df.to_mongo(df, collection, uri)
 
 
-Reading a collection from MongoDB into a pandas DataFrame::
+Reading a MongoDB collection into a pandas DataFrame::
 
 	import pdmongo as pdm
 	df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
