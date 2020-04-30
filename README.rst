@@ -55,10 +55,32 @@ Overview
 
 .. end-badges
 
-Transfer data between pandas dataframes and MongoDB
+This package allows you to read/write pandas dataframes in MongoDB in the simplest way possible.
 
 * Free software: MIT license
 
+===========
+Quick Start
+===========
+
+Writing a pandas DataFrame to a MongoDB collection::
+
+	import pdmongo as pdm
+	import pandas as pd
+
+	df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
+	df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
+	df.to_mongo(df, collection, uri)
+
+
+Reading a MongoDB collection into a pandas DataFrame::
+
+	import pdmongo as pdm
+	df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
+	print(df)
+
+
+============
 Installation
 ============
 
