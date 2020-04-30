@@ -1,6 +1,6 @@
-=====
-Usage
-=====
+===========
+Quick Usage
+===========
 
 Writing a pandas DataFrame to a MongoDB collection::
 
@@ -8,18 +8,34 @@ Writing a pandas DataFrame to a MongoDB collection::
 	import pandas as pd
 
 	df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
-	uri = "mongodb://localhost:27017/mydb"
-	collection = "ACollection"
-	aggregation_query = []
-	df = pdm.read_mongo(collection, aggregation_query, uri)
+	df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
 	df.to_mongo(df, collection, uri)
 
 
-Reading data from MongoDB into a pandas DataFrame::
+Reading a collection from MongoDB into a pandas DataFrame::
 
 	import pdmongo as pdm
-	uri = "mongodb://localhost:27017/mydb"
-	collection = "ACollection"
-	aggregation_query = []
-	df = pdm.read_mongo(collection, aggregation_query, uri)
+	df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
 	print(df)
+
+
+=================================================
+Reading dataframes from MongoDB using aggregation
+=================================================
+
+You can use an aggregation query to filter/transform data in MongoDB before fetching them into a data frame.
+
+Reading a collection from MongoDB into a pandas DataFrame by using an aggregation query::
+
+	import pdmongo as pdm
+    query = [ 
+		{
+			"$match": {
+				'A': 1
+			}
+		}
+	]
+	df = pdm.read_mongo("MyCollection", query, "mongodb://localhost:27017/mydb")
+	print(df)
+
+The *query* accepts the same arguments as method *aggregate* of pymongo package.
