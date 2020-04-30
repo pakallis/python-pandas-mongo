@@ -94,7 +94,6 @@ def read_mongo(
     db,
     index_col=None,
     extra=None,
-    parse_dates=None,
     columns=None,
     chunksize=None
 ):
@@ -118,19 +117,9 @@ def read_mongo(
         Column(s) to set as index(MultiIndex).
     extra : list, tuple or dict, optional, default: None
         List of parameters to pass to find/aggregate method.
-    parse_dates : list or dict, default: None
-        - List of column names to parse as dates.
-        - Dict of ``{column_name: format string}`` where format string is
-          strftime compatible in case of parsing string times, or is one of
-          (D, s, ns, ms, us) in case of parsing integer timestamps.
-        - Dict of ``{column_name: arg dict}``, where the arg dict corresponds
-          to the keyword arguments of :func:`pandas.to_datetime`
     chunksize : int, default None
         If specified, return an iterator where `chunksize` is the number of
         docs to include in each chunk.
-    typ: {‘frame’, ‘series’}, default ‘frame’
-        The type of object to recover.
-
     Returns
     -------
     Dataframe
