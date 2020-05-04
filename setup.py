@@ -58,8 +58,7 @@ setup(
         # 'Programming Language :: Python :: Implementation :: IronPython',
         # 'Programming Language :: Python :: Implementation :: Jython',
         # 'Programming Language :: Python :: Implementation :: Stackless',
-        'Topic :: Utilities',
-        'Private :: Do Not Upload',
+        'Topic :: Utilities'
     ],
     project_urls={
         'Documentation': 'https://python-pandas-mongo.readthedocs.io/',
