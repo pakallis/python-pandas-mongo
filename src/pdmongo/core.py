@@ -1,9 +1,19 @@
+from typing import Any
+from typing import Dict
+from typing import Iterator
+from typing import List
+from typing import Optional
+from typing import Sequence
+from typing import Union
+
 from pandas import DataFrame
 from pymongo import MongoClient
+from pymongo.database import Database
+from pymongo.results import InsertManyResult
 from pymongo.uri_parser import parse_uri
 
 
-def _get_db_instance(db):
+def _get_db_instance(db: Union[str, Database]) -> MongoClient:
     """
     Retrieve the pymongo.database.Database instance.
 
@@ -26,7 +36,7 @@ def _get_db_instance(db):
     return db
 
 
-def _handle_exists_collection(name, exists, db):
+def _handle_exists_collection(name: str, exists: Optional[str], db: Database) -> None:
     """
     Handles the `if_exists` argument of `to_mongo`.
 
@@ -55,7 +65,7 @@ def _handle_exists_collection(name, exists, db):
     raise ValueError(f"'{exists}' is not valid for if_exists")
 
 
-def _split_in_chunks(lst, chunksize):
+def _split_in_chunks(lst: Sequence[Any], chunksize: int) -> Iterator[Sequence[Any]]:
     """
     Splits a list in chunks based on provided chunk size.
 
@@ -73,7 +83,7 @@ def _split_in_chunks(lst, chunksize):
         yield lst[i:i + chunksize]
 
 
-def _validate_chunksize(chunksize):
+def _validate_chunksize(chunksize: int) -> None:
     """
     Raises the proper exception if chunksize is not valid.
 
@@ -89,14 +99,13 @@ def _validate_chunksize(chunksize):
 
 
 def read_mongo(
-    collection,
-    query,
-    db,
-    index_col=None,
-    extra=None,
-    columns=None,
-    chunksize=None
-):
+    collection: str,
+    query: List[Dict[str, Any]],
+    db: Union[str, Database],
+    index_col: Optional[Union[str, List[str]]] = None,
+    extra: Optional[Dict[str, Any]] = None,
+    chunksize: Optional[int] = None
+) -> DataFrame:
     """
     Read MongoDB query into a DataFrame.
 
@@ -115,8 +124,8 @@ def read_mongo(
         The database to use
     index_col : str or list of str, optional, default: None
         Column(s) to set as index(MultiIndex).
-    extra : list, tuple or dict, optional, default: None
-        List of parameters to pass to find/aggregate method.
+    extra : dict, optional, default: None
+        List of parameters to pass to aggregate method.
     chunksize : int, default None
         If specified, return an iterator where `chunksize` is the number of
         docs to include in each chunk.
@@ -143,14 +152,14 @@ def read_mongo(
 
 
 def to_mongo(
-    frame,
-    name,
-    db,
-    if_exists="fail",
-    index=True,
-    index_label=None,
-    chunksize=None,
-):
+    frame: DataFrame,
+    name: str,
+    db: Union[str, Database],
+    if_exists: Optional[str] = "fail",
+    index: Optional[bool] = True,
+    index_label: Optional[Union[str, Sequence[str]]] = None,
+    chunksize: Optional[int] = None,
+) -> Union[List[InsertManyResult], InsertManyResult]:
     """
     Write records stored in a DataFrame to a MongoDB collection.
 

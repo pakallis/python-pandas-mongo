@@ -47,9 +47,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/pdmongo
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/pakallis/python-pandas-mongo/v0.0.2.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/pakallis/python-pandas-mongo/v0.1.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/pakallis/python-pandas-mongo/compare/v0.0.2...master
+    :target: https://github.com/pakallis/python-pandas-mongo/compare/v0.1.0...master
 
 
 

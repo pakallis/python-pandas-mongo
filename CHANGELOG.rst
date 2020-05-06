@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.1.0 (2020-05-05)
+------------------
+* Added static typing
+* Added mypy to travis CI
+* Removed unecessary params
+
 0.0.2 (2020-05-04)
 ------------------
 
