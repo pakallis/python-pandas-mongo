@@ -69,15 +69,35 @@ Writing a pandas DataFrame to a MongoDB collection::
 	import pandas as pd
 
 	df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
-	df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
-	df.to_mongo(df, collection, uri)
+	df.to_mongo("MyCollection", "mongodb://localhost:27017/mydb")
 
 
 Reading a MongoDB collection into a pandas DataFrame::
 
-	import pdmongo as pdm
-	df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
-	print(df)
+    import pdmongo as pdm
+    df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
+    df 
+
++--------------------------+---+---+
+| _id                      | A | B |
++==========================+===+===+
+| 5eb4632e38df33464767482e | 1 | 3 |
++--------------------------+---+---+
+| 5eb4632e38df33464767482f | 2 | 4 |
++--------------------------+---+---+
+
+Querying a MongoDB collection with an aggregation query and returning the result as a pandas DataFrame::
+
+    import pdmongo as pdm
+    df = pdm.read_mongo("MyCollection", [{'$match': {'A': 1}}], "mongodb://localhost:27017/mydb")
+    df
+
++--------------------------+---+---+
+| _id                      | A | B |
++==========================+===+===+
+| 5eb4632e38df33464767482e | 1 | 3 |
++--------------------------+---+---+
+
 
 
 ============
