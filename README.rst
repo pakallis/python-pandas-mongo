@@ -63,16 +63,60 @@ This package allows you to read/write pandas dataframes in MongoDB in the simple
 Quick Start
 ===========
 
-Writing a pandas DataFrame to a MongoDB collection::
+Install pdmongo::
 
-	import pdmongo as pdm
-	import pandas as pd
+    pip install pdmongo
+
+Write a pandas DataFrame to a MongoDB collection::
+
+    import pandas as pd
+    import pdmongo as pdm
+
+    df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
+    df.to_mongo("MyCollection", "mongodb://localhost:27017/mydb")
+
+Read a MongoDB collection into a pandas DataFrame::
+
+    import pdmongo as pdm
+
+    df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
+    print(df)
+
+**NOTE: This requires MongoDB service to be running.**
+
+
+====================
+Examples / use cases
+====================
+
+Reading a MongoDB collection into a pandas data frame (aggregation query)
+=========================================================================
+
+You can use an aggregation query to filter/transform data in MongoDB before fetching them into a data frame.
+This allows you to delegate the slow operation to MongoDB.
+
+Reading a collection from MongoDB into a pandas DataFrame by using an aggregation query::
+
+    import pdmongo as pdm
+    import pandas as pd
+
+    # First generate some data and write them to MongoDB
+    df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
+    df.to_mongo(df, 'MyCollection', "mongodb://localhost:27017/mydb")
+
+    # Filter with an aggregate query and parse results into a data frame.
+    query = [{"$match": {'A': 1} }]
+    df = pdm.read_mongo("MyCollection", query, "mongodb://localhost:27017/mydb")
+    print(df) # Only values where A > 1 is returned
+
+The *query* accepts the same arguments as the *aggregate* method of pymongo package.
+
+**NOTE: This requires MongoDB service to be running.**
 
 	df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
 	df.to_mongo("MyCollection", "mongodb://localhost:27017/mydb")
 
 
-Reading a MongoDB collection into a pandas DataFrame::
 
     import pdmongo as pdm
     df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
@@ -113,13 +157,15 @@ You can also install the in-development version with::
     pip install https://github.com/pakallis/python-pandas-mongo/archive/master.zip
 
 
+=============
 Documentation
 =============
 
+You can find the documentation at::
 
-https://python-pandas-mongo.readthedocs.io/
+    https://python-pandas-mongo.readthedocs.io/
 
-
+===========
 Development
 ===========
 
