@@ -113,35 +113,51 @@ The *query* accepts the same arguments as the *aggregate* method of pymongo pack
 
 **NOTE: This requires MongoDB service to be running.**
 
-	df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
-	df.to_mongo("MyCollection", "mongodb://localhost:27017/mydb")
 
+Write MongoDB to a PostgreSQL table
+===================================
 
+You can write a MongoDB collection to a PostgreSQL table::
 
+    import numpy as np
+    import pandas as pd
     import pdmongo as pdm
-    df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
-    df 
+    from sqlalchemy import create_engine
 
-+--------------------------+---+---+
-| _id                      | A | B |
-+==========================+===+===+
-| 5eb4632e38df33464767482e | 1 | 3 |
-+--------------------------+---+---+
-| 5eb4632e38df33464767482f | 2 | 4 |
-+--------------------------+---+---+
+    # Generate some data and write them to MongoDB
+    df = pd.DataFrame({'A': [1, 2, 3]})
+    df.to_mongo("MyCollection", "mongodb://localhost:27017/mydb")
 
-Querying a MongoDB collection with an aggregation query and returning the result as a pandas DataFrame::
+    # Read data from MongoDB and write them to PostgreSQL
+    new_df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
+    engine = create_engine('postgres://postgres:postgres@localhost:5432', echo=False)
+    new_df[["A"]].to_sql("APostgresTable", engine)
 
+**NOTE: This requires the latest versions of SQLAlchemy,pandas(> 1.0), psycopg2 and MongoDB, PostgreSQL services to be running.**
+
+
+Plot data retrieved from a MongoDB Collection
+=============================================
+
+You can plot a collection retrieved from MongoDB
+
+::
+
+    import numpy as np
+    import pandas as pd
     import pdmongo as pdm
-    df = pdm.read_mongo("MyCollection", [{'$match': {'A': 1}}], "mongodb://localhost:27017/mydb")
-    df
+    import matplotlib.pyplot as plt
 
-+--------------------------+---+---+
-| _id                      | A | B |
-+==========================+===+===+
-| 5eb4632e38df33464767482e | 1 | 3 |
-+--------------------------+---+---+
+    # Generate data and write them to MongoDB
+    df = pd.DataFrame({'Value': np.random.randn(1000)})
+    df.to_mongo('TimeSeries', 'mongodb://localhost:27017/mydb')
 
+    # Read collection from MongoDB and plot data
+    new_df = pdm.read_mongo("TimeSeries", [], "mongodb://localhost:27017/mydb")
+    new_df.plot()
+    plt.show()
+
+**NOTE: This requires the latest versions of pandas(> 1.0) and MongoDB service to be running.**
 
 
 ============
