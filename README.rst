@@ -82,7 +82,6 @@ Read a MongoDB collection into a pandas DataFrame::
     df = pdm.read_mongo("MyCollection", [], "mongodb://localhost:27017/mydb")
     print(df)
 
-**NOTE: This requires MongoDB service to be running.**
 
 
 ====================
@@ -111,7 +110,6 @@ Reading a collection from MongoDB into a pandas DataFrame by using an aggregatio
 
 The *query* accepts the same arguments as the *aggregate* method of pymongo package.
 
-**NOTE: This requires MongoDB service to be running.**
 
 
 Write MongoDB to a PostgreSQL table
@@ -133,7 +131,7 @@ You can write a MongoDB collection to a PostgreSQL table::
     engine = create_engine('postgres://postgres:postgres@localhost:5432', echo=False)
     new_df[["A"]].to_sql("APostgresTable", engine)
 
-**NOTE: This requires the latest versions of SQLAlchemy,pandas(> 1.0), psycopg2 and MongoDB, PostgreSQL services to be running.**
+**NOTE: This requires the latest versions of SQLAlchemy,pandas(> 1.0)**
 
 
 Plot data retrieved from a MongoDB Collection
@@ -157,7 +155,7 @@ You can plot a collection retrieved from MongoDB
     new_df.plot()
     plt.show()
 
-**NOTE: This requires the latest versions of pandas(> 1.0) and MongoDB service to be running.**
+**NOTE: This requires the latest versions of pandas(> 1.0)**
 
 
 ============
