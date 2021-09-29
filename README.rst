@@ -131,8 +131,6 @@ You can write a MongoDB collection to a PostgreSQL table::
     engine = create_engine('postgres://postgres:postgres@localhost:5432', echo=False)
     new_df[["A"]].to_sql("APostgresTable", engine)
 
-**NOTE: This requires the latest versions of SQLAlchemy,pandas(> 1.0)**
-
 
 Plot data retrieved from a MongoDB Collection
 =============================================
@@ -154,8 +152,6 @@ You can plot a collection retrieved from MongoDB
     new_df = pdm.read_mongo("TimeSeries", [], "mongodb://localhost:27017/mydb")
     new_df.plot()
     plt.show()
-
-**NOTE: This requires the latest versions of pandas(> 1.0)**
 
 
 ============
