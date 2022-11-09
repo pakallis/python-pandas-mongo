@@ -4,60 +4,37 @@ import pandas as pd
 import pytest
 
 import pdmongo as pdm
+import pymongo
+import pymongo.errors
 
 
 def test_to_mongo_default_args(mocker):
     df = pd.DataFrame({'A': [1, 2]})
-
-    class DBStub():
-        def insert_many(self, docs):
-            pass
-
-        def count(self):
-            return 0
-
     collection_name = 'Acollection'
-    db = {collection_name: DBStub()}
-    spy = mocker.spy(db[collection_name], 'insert_many')
-
-    pdm.to_mongo(df, collection_name, db)
-    spy.assert_called_with([{'A': 1}, {'A': 2}])
+    mock_db = mocker.patch('pymongo.database.Database')
+    mock_db.validate_collection.side_effect = [pymongo.errors.OperationFailure("")]
+    pdm.to_mongo(df, collection_name, mock_db)
+    mock_db[collection_name].insert_many.assert_called_with([{'A': 1}, {'A': 2}])
 
 
 def test_to_mongo_with_index_true(mocker):
     df = pd.DataFrame({'A': [1, 2], 'B': [2, 3]}).set_index('B')
-
-    class DBStub():
-        def insert_many(self, docs):
-            pass
-
-        def count(self):
-            return 0
-
     collection_name = 'Acollection'
-    db = {collection_name: DBStub()}
-    spy = mocker.spy(db[collection_name], 'insert_many')
+    mock_db = mocker.patch('pymongo.database.Database')
+    mock_db.validate_collection.side_effect = [pymongo.errors.OperationFailure("")]
 
-    pdm.to_mongo(df, collection_name, db)
-    spy.assert_called_with([{'A': 1, 'B': 2}, {'A': 2, 'B': 3}])
+    pdm.to_mongo(df, collection_name, mock_db)
+    mock_db[collection_name].insert_many.assert_called_with([{'A': 1, 'B': 2}, {'A': 2, 'B': 3}])
 
 
 def test_to_mongo_with_index_false(mocker):
     df = pd.DataFrame({'A': [1, 2], 'B': [2, 3]}).set_index('B')
-
-    class DBStub():
-        def insert_many(self, docs):
-            pass
-
-        def count(self):
-            return 0
-
     collection_name = 'Acollection'
-    db = {collection_name: DBStub()}
-    spy = mocker.spy(db[collection_name], 'insert_many')
+    mock_db = mocker.patch('pymongo.database.Database')
+    mock_db.validate_collection.side_effect = [pymongo.errors.OperationFailure("")]
 
-    pdm.to_mongo(df, collection_name, db, index=False)
-    spy.assert_called_with([{'A': 1}, {'A': 2}])
+    pdm.to_mongo(df, collection_name, mock_db, index=False)
+    mock_db[collection_name].insert_many.assert_called_with([{'A': 1}, {'A': 2}])
 
 
 @pytest.mark.parametrize("chunksize, expected_calls", [
@@ -80,20 +57,12 @@ def test_to_mongo_with_index_false(mocker):
 ])
 def test_to_mongo_with_chunksize(chunksize, expected_calls, mocker):
     df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': [2, 3, 4, 5]}).set_index('B')
-
-    class DBStub():
-        def insert_many(self, docs):
-            pass
-
-        def count(self):
-            return 0
-
     collection_name = 'Acollection'
-    db = {collection_name: DBStub()}
-    spy = mocker.spy(db[collection_name], 'insert_many')
+    mock_db = mocker.patch('pymongo.database.Database')
+    mock_db.validate_collection.side_effect = [pymongo.errors.OperationFailure("")]
 
-    pdm.to_mongo(df, collection_name, db, index=False, chunksize=chunksize)
-    spy.assert_has_calls(expected_calls)
+    pdm.to_mongo(df, collection_name, mock_db, index=False, chunksize=chunksize)
+    mock_db[collection_name].insert_many.assert_has_calls(expected_calls)
 
 
 @pytest.mark.parametrize("chunksize", [
@@ -105,13 +74,11 @@ def test_to_mongo_with_chunksize(chunksize, expected_calls, mocker):
 def test_to_mongo_with_chunksize_raises_type_error(chunksize, mocker):
     collection_name = 'ACollection'
 
-    class DBStub():
-        def count(self):
-            return 0
+    mock_db = mocker.patch('pymongo.database.Database')
+    mock_db.validate_collection.side_effect = [pymongo.errors.OperationFailure("")]
 
-    db = {collection_name: DBStub()}
     with pytest.raises(TypeError):
-        pdm.to_mongo(pd.DataFrame(), collection_name, db, chunksize=chunksize)
+        pdm.to_mongo(pd.DataFrame(), collection_name, mock_db, chunksize=chunksize)
 
 
 @pytest.mark.parametrize("chunksize", [
@@ -120,61 +87,31 @@ def test_to_mongo_with_chunksize_raises_type_error(chunksize, mocker):
 ])
 def test_to_mongo_with_chunksize_raises_value_error(chunksize, mocker):
     collection_name = 'ACollection'
-
-    class DBStub():
-        def count(self):
-            return 0
-
-    db = {collection_name: DBStub()}
+    mock_db = mocker.patch('pymongo.database.Database')
+    mock_db.validate_collection.side_effect = [pymongo.errors.OperationFailure("")]
     with pytest.raises(ValueError):
-        pdm.to_mongo(pd.DataFrame(), collection_name, db, chunksize=chunksize)
+        pdm.to_mongo(pd.DataFrame(), collection_name, mock_db, chunksize=chunksize)
 
 
-def test_to_mongo_with_if_exists_fail_raises_value_error():
-    class DBStub():
-        def count(self):
-            return 1
-
+def test_to_mongo_with_if_exists_fail_raises_value_error(mocker):
     collection_name = 'Acollection'
-    db = {collection_name: DBStub()}
+    mock_db = mocker.patch('pymongo.database.Database')
     with pytest.raises(ValueError, match='already exists'):
-        pdm.to_mongo(pd.DataFrame(), collection_name, db, if_exists='fail')
+        pdm.to_mongo(pd.DataFrame(), collection_name, mock_db, if_exists='fail')
 
 
 def test_to_mongo_with_if_exists_replace_calls_drop(mocker):
-    class DBStub():
-        def count(self):
-            return 1
-
-        def drop(self):
-            pass
-
-        def insert_many(self, *docs):
-            pass
-
-    collection_name = 'Acollection'
-    db = {collection_name: DBStub()}
-    spy = mocker.spy(db[collection_name], 'drop')
-    pdm.to_mongo(pd.DataFrame(), collection_name, db, if_exists='replace')
-    spy.assert_called_once()
+    collection_name = 'ACollection'
+    mock_db = mocker.patch('pymongo.database.Database')
+    pdm.to_mongo(pd.DataFrame(), collection_name, mock_db, if_exists='replace')
+    mock_db[collection_name].drop.assert_called_once()
 
 
 def test_to_mongo_with_if_exists_append(mocker):
-    class DBStub():
-        def count(self):
-            return 1
-
-        def drop(self):
-            pass
-
-        def insert_many(self, *docs):
-            pass
-
-    collection_name = 'Acollection'
-    db = {collection_name: DBStub()}
-    spy = mocker.spy(db[collection_name], 'drop')
-    pdm.to_mongo(pd.DataFrame(), collection_name, db, if_exists='append')
-    spy.assert_not_called()
+    collection_name = 'ACollection'
+    mock_db = mocker.patch('pymongo.database.Database')
+    pdm.to_mongo(pd.DataFrame(), collection_name, mock_db, if_exists='append')
+    mock_db[collection_name].drop.assert_not_called()
 
 
 @pytest.mark.parametrize("if_exists", [
@@ -191,6 +128,9 @@ def test_to_mongo_with_if_exists_invalid_raises_value_error(if_exists):
 
 
 def test_read_mongo(mocker):
+    collection_name = 'ACollection'
+    mock_db = mocker.patch('pymongo.database.Database')
+    mock_db.validate_collection.side_effect = [pymongo.errors.OperationFailure("")]
     class DBStub():
         def aggregate(self, docs):
             return []
