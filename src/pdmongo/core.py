@@ -36,6 +36,14 @@ def _get_db_instance(db: Union[str, Database]) -> MongoClient:
     return db
 
 
+def _collection_exists(db, col_name):
+    try:
+        db.validate_collection(col_name)
+        return True
+    except pymongo.errors.OperationFailure:
+        return False
+
+
 def _handle_exists_collection(name: str, exists: Optional[str], db: Database) -> None:
     """
     Handles the `if_exists` argument of `to_mongo`.
@@ -49,13 +57,14 @@ def _handle_exists_collection(name: str, exists: Optional[str], db: Database) ->
             - append: Documents are appended to existing collection
     """
 
+    
     if exists == "fail":
-        if db[name].count() > 0:
+        if _collection_exists(db, name):
             raise ValueError(f"Collection '{name}' already exists.")
         return
 
     if exists == "replace":
-        if db[name].count() > 0:
+        if _collection_exists(db, name):
             db[name].drop()
         return
 
