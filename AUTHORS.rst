@@ -2,4 +2,4 @@
 Authors
 =======
 
-* Pavlos Kallis - https://pakallis.github.com
+* Pavlos Kallis - https://www.pakallis.xyz
