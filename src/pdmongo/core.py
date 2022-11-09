@@ -36,7 +36,7 @@ def _get_db_instance(db: Union[str, Database]) -> MongoClient:
     return db
 
 
-def _collection_exists(db, col_name):
+def _collection_exists(db: Database, col_name: str) -> bool:
     try:
         db.validate_collection(col_name)
         return True
@@ -57,7 +57,6 @@ def _handle_exists_collection(name: str, exists: Optional[str], db: Database) ->
             - append: Documents are appended to existing collection
     """
 
-    
     if exists == "fail":
         if _collection_exists(db, name):
             raise ValueError(f"Collection '{name}' already exists.")
