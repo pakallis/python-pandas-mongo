@@ -22,6 +22,7 @@ git commit -m "Release: v$2"
 git tag -f "v$2"
 git push -f --tags
 sleep 10
+python -m build
 
 echo "Running checks"
 

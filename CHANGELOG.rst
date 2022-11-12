@@ -2,6 +2,10 @@
 Changelog
 =========
 
+0.2.3 (2022-11-12)
+------------------
+* Add prepare release script
+
 0.2.2 (2022-11-12)
 ------------------
 * Fix lint offenses
