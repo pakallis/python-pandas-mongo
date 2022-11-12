@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.2.0 (2020-05-05)
+0.2.0 (2022-11-12)
 ------------------
 * Add compatibility for pymongo 4+
 
