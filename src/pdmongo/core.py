@@ -6,6 +6,7 @@ from typing import Optional
 from typing import Sequence
 from typing import Union
 
+import pymongo.errors
 from pandas import DataFrame
 from pymongo import MongoClient
 from pymongo.database import Database
@@ -36,6 +37,14 @@ def _get_db_instance(db: Union[str, Database]) -> MongoClient:
     return db
 
 
+def _collection_exists(db: Database, col_name: str) -> bool:
+    try:
+        db.validate_collection(col_name)
+        return True
+    except pymongo.errors.OperationFailure:
+        return False
+
+
 def _handle_exists_collection(name: str, exists: Optional[str], db: Database) -> None:
     """
     Handles the `if_exists` argument of `to_mongo`.
@@ -50,12 +59,12 @@ def _handle_exists_collection(name: str, exists: Optional[str], db: Database) ->
     """
 
     if exists == "fail":
-        if db[name].count() > 0:
+        if _collection_exists(db, name):
             raise ValueError(f"Collection '{name}' already exists.")
         return
 
     if exists == "replace":
-        if db[name].count() > 0:
+        if _collection_exists(db, name):
             db[name].drop()
         return
 
