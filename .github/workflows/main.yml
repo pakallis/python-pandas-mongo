@@ -25,7 +25,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install requirements
-        run: pip install -e .[tests] tox tox-gh-actions
+        run: pip install -e . tox tox-gh-actions flake8
       # You can test your matrix by printing the current Python version
+      - name: Run lint
+        run: flake8 src
       - name: Run tests
         run: tox
