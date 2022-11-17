@@ -2,6 +2,23 @@
 Changelog
 =========
 
+0.2.3 (2022-11-12)
+------------------
+* Add prepare release script
+
+0.2.2 (2022-11-12)
+------------------
+* Fix lint offenses
+
+0.2.1 (2022-11-12)
+------------------
+* Minor changes
+
+0.2.0 (2022-11-12)
+------------------
+* Add compatibility for pymongo 4+
+
+
 0.1.0 (2020-05-05)
 ------------------
 * Added static typing

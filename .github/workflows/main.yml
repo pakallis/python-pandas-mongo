@@ -1,16 +1,22 @@
 name: Tests
 
-on: [push]
+on:
+  pull_request:
+    push:
+      branches: [master]
+      tags: ["*"]
+    workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-
+  ci:
     runs-on: ubuntu-latest
     strategy:
-      # You can use PyPy versions in python-version.
-      # For example, pypy-2.7 and pypy-3.8
       matrix:
-        python: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python: ["3.7", "3.8", "3.9", "3.10"]
 
     steps:
       - uses: actions/checkout@v3
@@ -19,7 +25,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install requirements
-        run: pip install pytest pytest-cov pytest-mock -e .
+        run: pip install -e . tox tox-gh-actions flake8
       # You can test your matrix by printing the current Python version
+      - name: Run lint
+        run: flake8 src
       - name: Run tests
-        run: pytest -vv tests
+        run: tox

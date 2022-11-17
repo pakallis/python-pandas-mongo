@@ -1,11 +1,11 @@
 from unittest.mock import call
 
 import pandas as pd
+import pymongo
+import pymongo.errors
 import pytest
 
 import pdmongo as pdm
-import pymongo
-import pymongo.errors
 
 
 def test_to_mongo_default_args(mocker):
@@ -131,6 +131,7 @@ def test_read_mongo(mocker):
     collection_name = 'ACollection'
     mock_db = mocker.patch('pymongo.database.Database')
     mock_db.validate_collection.side_effect = [pymongo.errors.OperationFailure("")]
+
     class DBStub():
         def aggregate(self, docs):
             return []
