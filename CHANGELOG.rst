@@ -2,6 +2,11 @@
 Changelog
 =========
 
+0.3.4 (2022-11-17)
+------------------
+* Support for python3.7-3.10
+* Fix wrong version of Python in CI
+
 0.3.3 (2022-11-17)
 ------------------
 * Restrict pandas to >=0.20,<1.6
