@@ -19,5 +19,5 @@ jobs:
           python-version: 3.8
       - name: Install requirements
         run: pip install -e . tox tox-gh-actions
-      - name: Run tests
+      - name: Run checks
         run: tox -e checks
