@@ -70,14 +70,13 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'pymongo>=3.4',
-        'pandas>=0.20'
+        'pymongo>=3.13,<4.4',
+        'pandas>=0.20,<1.6'
     ],
     extras_require={
         "test": [
             "pytest>=4.0.2",
             "pytest-mock>=1.10.0",
-            "hypothesis>=3.58"
         ]
     },
     setup_requires=[
