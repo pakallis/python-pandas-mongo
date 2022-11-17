@@ -6,4 +6,4 @@ from .core import to_mongo
 pandas.DataFrame.to_mongo = to_mongo
 
 __all__ = ['read_mongo', 'to_mongo']
-__version__ = '0.3.3'
+__version__ = '0.3.4'
