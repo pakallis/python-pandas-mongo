@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.3.3 (2022-11-17)
+------------------
+* Restrict pandas to >=0.20,<1.6
+* Restrict pymongo to >=13,<4.4
+* Remove hypothesis
+* Run tests with tox in CI
+* Add flake8 checks in CI
+
 0.2.3 (2022-11-12)
 ------------------
 * Add prepare release script
